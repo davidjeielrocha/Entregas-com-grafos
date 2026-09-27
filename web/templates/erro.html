@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block titulo %}Erro na configuração{% endblock %}
+
+{% block corpo %}
+<section class="cartao">
+  <h1>Não foi possível carregar os dados</h1>
+  <div class="aviso aviso-erro">{{ erro }}</div>
+  <p>Corrija o arquivo <code>config/dados.json</code>, edite pela página de configuração ou restaure os dados padrão.</p>
+  <div class="acoes">
+    <a class="botao primario" href="{{ url_for('configuracao') }}">Abrir configuração</a>
+    <form method="post" action="{{ url_for('restaurar') }}">
+      <button type="submit" class="perigo">Restaurar padrão</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

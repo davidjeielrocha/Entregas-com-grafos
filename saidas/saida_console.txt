@@ -1,0 +1,136 @@
+
+==============================================================================
+ITEM 3.1 - GRAFO DOS PONTOS DE ENTREGA
+==============================================================================
+  Vértices: 6 | Arestas: 10 | Conexo: True
+  grau(Esplanada) = 5
+  grau(Asa Sul) = 3
+  grau(Lago Sul) = 3
+  grau(Asa Norte) = 3
+  grau(Vila Planalto) = 3
+  grau(Lago Norte) = 3
+  [imagem salva] E:\Codigos\projetos\AA-Grafos\saidas\tela1_grafo_original.png
+
+==============================================================================
+ITEM 3.2 - MENOR CAMINHO: LAGO NORTE -> LAGO SUL (Dijkstra)
+==============================================================================
+  Rota : Lago Norte -(8)-> Esplanada -(5)-> Asa Sul -(5)-> Lago Sul
+  Custo: 18
+  [imagem salva] E:\Codigos\projetos\AA-Grafos\saidas\tela2_menor_caminho_ln_ls.png
+
+==============================================================================
+ITEM 3.3 - CUSTOS ENTRE A SEDE (LAGO NORTE) E TODOS OS PONTOS
+==============================================================================
+
+[A] Menor custo da sede até cada ponto (Dijkstra):
+  Vila Planalto  custo  7 | Lago Norte -(7)-> Vila Planalto
+  Esplanada      custo  8 | Lago Norte -(8)-> Esplanada
+  Asa Norte      custo 12 | Lago Norte -(12)-> Asa Norte
+  Asa Sul        custo 13 | Lago Norte -(8)-> Esplanada -(5)-> Asa Sul
+  Lago Sul       custo 18 | Lago Norte -(8)-> Esplanada -(5)-> Asa Sul -(5)-> Lago Sul
+  Soma dos menores custos: 58
+
+[B] Todos os caminhos simples da sede até cada ponto:
+
+  -> Asa Sul: 14 caminhos
+     01. custo 13 | Lago Norte -> Esplanada -> Asa Sul
+     02. custo 22 | Lago Norte -> Vila Planalto -> Esplanada -> Asa Sul
+     03. custo 23 | Lago Norte -> Asa Norte -> Esplanada -> Asa Sul
+     04. custo 24 | Lago Norte -> Esplanada -> Lago Sul -> Asa Sul
+     05. custo 24 | Lago Norte -> Asa Norte -> Asa Sul
+     06. custo 26 | Lago Norte -> Esplanada -> Asa Norte -> Asa Sul
+     07. custo 26 | Lago Norte -> Vila Planalto -> Lago Sul -> Asa Sul
+     08. custo 33 | Lago Norte -> Vila Planalto -> Esplanada -> Lago Sul -> Asa Sul
+     09. custo 34 | Lago Norte -> Asa Norte -> Esplanada -> Lago Sul -> Asa Sul
+     10. custo 35 | Lago Norte -> Vila Planalto -> Esplanada -> Asa Norte -> Asa Sul
+     11. custo 37 | Lago Norte -> Esplanada -> Vila Planalto -> Lago Sul -> Asa Sul
+     12. custo 37 | Lago Norte -> Vila Planalto -> Lago Sul -> Esplanada -> Asa Sul
+     13. custo 47 | Lago Norte -> Asa Norte -> Esplanada -> Vila Planalto -> Lago Sul -> Asa Sul
+     14. custo 50 | Lago Norte -> Vila Planalto -> Lago Sul -> Esplanada -> Asa Norte -> Asa Sul
+
+  -> Lago Sul: 14 caminhos
+     01. custo 18 | Lago Norte -> Esplanada -> Asa Sul -> Lago Sul
+     02. custo 19 | Lago Norte -> Esplanada -> Lago Sul
+     03. custo 21 | Lago Norte -> Vila Planalto -> Lago Sul
+     04. custo 27 | Lago Norte -> Vila Planalto -> Esplanada -> Asa Sul -> Lago Sul
+     05. custo 28 | Lago Norte -> Asa Norte -> Esplanada -> Asa Sul -> Lago Sul
+     06. custo 28 | Lago Norte -> Vila Planalto -> Esplanada -> Lago Sul
+     07. custo 29 | Lago Norte -> Asa Norte -> Asa Sul -> Lago Sul
+     08. custo 29 | Lago Norte -> Asa Norte -> Esplanada -> Lago Sul
+     09. custo 31 | Lago Norte -> Esplanada -> Asa Norte -> Asa Sul -> Lago Sul
+     10. custo 32 | Lago Norte -> Esplanada -> Vila Planalto -> Lago Sul
+     11. custo 40 | Lago Norte -> Asa Norte -> Asa Sul -> Esplanada -> Lago Sul
+     12. custo 40 | Lago Norte -> Vila Planalto -> Esplanada -> Asa Norte -> Asa Sul -> Lago Sul
+     13. custo 42 | Lago Norte -> Asa Norte -> Esplanada -> Vila Planalto -> Lago Sul
+     14. custo 53 | Lago Norte -> Asa Norte -> Asa Sul -> Esplanada -> Vila Planalto -> Lago Sul
+
+  -> Esplanada: 9 caminhos
+     01. custo  8 | Lago Norte -> Esplanada
+     02. custo 17 | Lago Norte -> Vila Planalto -> Esplanada
+     03. custo 18 | Lago Norte -> Asa Norte -> Esplanada
+     04. custo 29 | Lago Norte -> Asa Norte -> Asa Sul -> Esplanada
+     05. custo 31 | Lago Norte -> Vila Planalto -> Lago Sul -> Asa Sul -> Esplanada
+     06. custo 32 | Lago Norte -> Vila Planalto -> Lago Sul -> Esplanada
+     07. custo 40 | Lago Norte -> Asa Norte -> Asa Sul -> Lago Sul -> Esplanada
+     08. custo 44 | Lago Norte -> Vila Planalto -> Lago Sul -> Asa Sul -> Asa Norte -> Esplanada
+     09. custo 53 | Lago Norte -> Asa Norte -> Asa Sul -> Lago Sul -> Vila Planalto -> Esplanada
+
+  -> Asa Norte: 12 caminhos
+     01. custo 12 | Lago Norte -> Asa Norte
+     02. custo 14 | Lago Norte -> Esplanada -> Asa Norte
+     03. custo 23 | Lago Norte -> Vila Planalto -> Esplanada -> Asa Norte
+     04. custo 25 | Lago Norte -> Esplanada -> Asa Sul -> Asa Norte
+     05. custo 34 | Lago Norte -> Vila Planalto -> Esplanada -> Asa Sul -> Asa Norte
+     06. custo 36 | Lago Norte -> Esplanada -> Lago Sul -> Asa Sul -> Asa Norte
+     07. custo 37 | Lago Norte -> Vila Planalto -> Lago Sul -> Asa Sul -> Esplanada -> Asa Norte
+     08. custo 38 | Lago Norte -> Vila Planalto -> Lago Sul -> Asa Sul -> Asa Norte
+     09. custo 38 | Lago Norte -> Vila Planalto -> Lago Sul -> Esplanada -> Asa Norte
+     10. custo 45 | Lago Norte -> Vila Planalto -> Esplanada -> Lago Sul -> Asa Sul -> Asa Norte
+     11. custo 49 | Lago Norte -> Esplanada -> Vila Planalto -> Lago Sul -> Asa Sul -> Asa Norte
+     12. custo 49 | Lago Norte -> Vila Planalto -> Lago Sul -> Esplanada -> Asa Sul -> Asa Norte
+
+  -> Vila Planalto: 12 caminhos
+     01. custo  7 | Lago Norte -> Vila Planalto
+     02. custo 18 | Lago Norte -> Esplanada -> Vila Planalto
+     03. custo 28 | Lago Norte -> Asa Norte -> Esplanada -> Vila Planalto
+     04. custo 32 | Lago Norte -> Esplanada -> Asa Sul -> Lago Sul -> Vila Planalto
+     05. custo 33 | Lago Norte -> Esplanada -> Lago Sul -> Vila Planalto
+     06. custo 39 | Lago Norte -> Asa Norte -> Asa Sul -> Esplanada -> Vila Planalto
+     07. custo 42 | Lago Norte -> Asa Norte -> Esplanada -> Asa Sul -> Lago Sul -> Vila Planalto
+     08. custo 43 | Lago Norte -> Asa Norte -> Asa Sul -> Lago Sul -> Vila Planalto
+     09. custo 43 | Lago Norte -> Asa Norte -> Esplanada -> Lago Sul -> Vila Planalto
+     10. custo 45 | Lago Norte -> Esplanada -> Asa Norte -> Asa Sul -> Lago Sul -> Vila Planalto
+     11. custo 50 | Lago Norte -> Asa Norte -> Asa Sul -> Lago Sul -> Esplanada -> Vila Planalto
+     12. custo 54 | Lago Norte -> Asa Norte -> Asa Sul -> Esplanada -> Lago Sul -> Vila Planalto
+
+  Total de caminhos simples: 61 | soma de todos os custos: 1974
+
+[C] Árvore Geradora Mínima (Prim):
+  Asa Sul - Lago Sul (5)
+  Asa Sul - Esplanada (5)
+  Esplanada - Asa Norte (6)
+  Esplanada - Lago Norte (8)
+  Vila Planalto - Lago Norte (7)
+  Custo da AGM: 31
+  [imagem salva] E:\Codigos\projetos\AA-Grafos\saidas\tela3_arvore_dijkstra_sede.png
+
+==============================================================================
+ITEM 3.4 - ROTA MAIS ECONÔMICA VISITANDO TODOS (ORIGEM: LAGO NORTE)
+==============================================================================
+  Ordens de visita avaliadas: 120
+  Rota : Lago Norte -(7)-> Vila Planalto -(14)-> Lago Sul -(5)-> Asa Sul -(5)-> Esplanada -(6)-> Asa Norte
+  Custo: 37
+  Permitir repetir pontos não reduz o custo (passeio ótimo = 37).
+  [imagem salva] E:\Codigos\projetos\AA-Grafos\saidas\tela4_rota_economica_lago_norte.png
+
+==============================================================================
+ITEM 3.5 - ESPLANADA -> TODOS OS PONTOS -> LAGO NORTE (R$ 20,00/custo)
+==============================================================================
+  Cenário 1 - Caminho Hamiltoniano (sem repetir pontos):
+    Esplanada -(6)-> Asa Norte -(12)-> Asa Sul -(5)-> Lago Sul -(14)-> Vila Planalto -(7)-> Lago Norte
+    Custo 44 x R$ 20,00 = R$ 880,00
+  Cenário 2 - Passeio ótimo (pode repassar por Esplanada):
+    Esplanada -(6)-> Asa Norte -(6)-> Esplanada -(5)-> Asa Sul -(5)-> Lago Sul -(14)-> Vila Planalto -(7)-> Lago Norte
+    Custo 43 x R$ 20,00 = R$ 860,00
+  Economia do cenário 2: R$ 20,00
+  [imagem salva] E:\Codigos\projetos\AA-Grafos\saidas\tela5_rota_esplanada_lago_norte.png

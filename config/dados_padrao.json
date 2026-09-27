@@ -1,0 +1,26 @@
+{
+  "sede": "Lago Norte",
+  "valor_por_custo": 20.0,
+  "destino_menor_caminho": "Lago Sul",
+  "origem_rota_final": "Esplanada",
+  "arestas": [
+    ["Asa Sul", "Lago Sul", 5],
+    ["Asa Sul", "Esplanada", 5],
+    ["Asa Sul", "Asa Norte", 12],
+    ["Lago Sul", "Esplanada", 11],
+    ["Lago Sul", "Vila Planalto", 14],
+    ["Esplanada", "Asa Norte", 6],
+    ["Esplanada", "Vila Planalto", 10],
+    ["Esplanada", "Lago Norte", 8],
+    ["Asa Norte", "Lago Norte", 12],
+    ["Vila Planalto", "Lago Norte", 7]
+  ],
+  "posicoes": {
+    "Asa Sul": [-0.8, 1.8],
+    "Lago Sul": [1.0, 1.8],
+    "Esplanada": [0.0, 0.5],
+    "Asa Norte": [-1.9, -0.3],
+    "Vila Planalto": [1.9, 0.2],
+    "Lago Norte": [0.2, -1.1]
+  }
+}

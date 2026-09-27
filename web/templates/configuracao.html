@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block titulo %}Configuração{% endblock %}
+
+{% block corpo %}
+<h1>Configuração dos dados</h1>
+<p class="nota">
+  {% if personalizada %}
+    Você está usando <strong>dados personalizados</strong> (<code>config/dados.json</code>).
+    Use “Restaurar padrão” para voltar aos dados do enunciado.
+  {% else %}
+    Você está usando os <strong>dados padrão</strong> do enunciado (<code>config/dados_padrao.json</code>).
+    Ao salvar, suas alterações vão para <code>config/dados.json</code> e o padrão permanece intacto.
+  {% endif %}
+</p>
+
+{% if erros %}
+<div class="aviso aviso-erro">
+  <strong>Corrija os itens abaixo:</strong>
+  <ul>{% for e in erros %}<li>{{ e }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
+
+<datalist id="lista-pontos"></datalist>
+<template id="modelo-tabela-arestas">
+  <tr>
+    <td><input name="origem" list="lista-pontos"></td>
+    <td><input name="destino" list="lista-pontos"></td>
+    <td><input name="peso" type="number" step="any" min="0" class="dir"></td>
+    <td><button type="button" class="remover" title="Remover linha">×</button></td>
+  </tr>
+</template>
+<template id="modelo-tabela-posicoes">
+  <tr>
+    <td><input name="pos_nome" list="lista-pontos"></td>
+    <td><input name="pos_x" type="number" step="any" class="dir"></td>
+    <td><input name="pos_y" type="number" step="any" class="dir"></td>
+    <td><button type="button" class="remover" title="Remover linha">×</button></td>
+  </tr>
+</template>
+
+<form method="post" id="form-config" class="cartao">
+  <h2>Parâmetros</h2>
+  <div class="grade-campos">
+    <label>Sede (origem dos itens 3.2 a 3.4 e destino do 3.5)
+      <input name="sede" list="lista-pontos" value="{{ d.sede }}" required></label>
+    <label>Destino do menor caminho (item 3.2)
+      <input name="destino_menor_caminho" list="lista-pontos" value="{{ d.destino_menor_caminho }}" required></label>
+    <label>Origem da rota final (item 3.5)
+      <input name="origem_rota_final" list="lista-pontos" value="{{ d.origem_rota_final }}" required></label>
+    <label>Valor (R$) por unidade de custo
+      <input name="valor_por_custo" type="number" step="0.01" min="0" value="{{ d.valor_por_custo }}" required></label>
+  </div>
+
+  <h2>Ligações entre pontos (arestas)</h2>
+  <p class="nota">Cada linha é uma via de mão dupla entre dois pontos com seu custo. Os pontos são criados a partir destas linhas.</p>
+  <table class="editavel" id="tabela-arestas">
+    <thead><tr><th>Ponto A</th><th>Ponto B</th><th class="dir">Custo</th><th></th></tr></thead>
+    <tbody>
+      {% for u, v, w in d.arestas %}
+      <tr>
+        <td><input name="origem" list="lista-pontos" value="{{ u }}"></td>
+        <td><input name="destino" list="lista-pontos" value="{{ v }}"></td>
+        <td><input name="peso" type="number" step="any" min="0" value="{{ w }}" class="dir"></td>
+        <td><button type="button" class="remover" title="Remover linha">×</button></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <button type="button" class="secundario" data-adicionar="tabela-arestas">+ Adicionar ligação</button>
+
+  <h2>Posições no desenho <small>(opcional)</small></h2>
+  <p class="nota">Coordenadas (x, y) de cada ponto na imagem. Pontos sem posição são posicionados automaticamente.</p>
+  <table class="editavel" id="tabela-posicoes">
+    <thead><tr><th>Ponto</th><th class="dir">x</th><th class="dir">y</th><th></th></tr></thead>
+    <tbody>
+      {% for n, p in d.posicoes.items() %}
+      <tr>
+        <td><input name="pos_nome" list="lista-pontos" value="{{ n }}"></td>
+        <td><input name="pos_x" type="number" step="any" value="{{ p[0] }}" class="dir"></td>
+        <td><input name="pos_y" type="number" step="any" value="{{ p[1] }}" class="dir"></td>
+        <td><button type="button" class="remover" title="Remover linha">×</button></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <button type="button" class="secundario" data-adicionar="tabela-posicoes">+ Adicionar posição</button>
+
+  <div class="acoes">
+    <button type="submit" class="primario">Salvar e recalcular</button>
+    <a class="botao secundario" href="{{ url_for('resultados') }}">Cancelar</a>
+  </div>
+</form>
+
+<section class="cartao">
+  <h2>Outras ações</h2>
+  <div class="acoes">
+    <form method="post" action="{{ url_for('restaurar') }}"
+          onsubmit="return confirm('Descartar os dados personalizados e voltar ao padrão do enunciado?')">
+      <button type="submit" class="perigo" {{ 'disabled' if not personalizada }}>Restaurar padrão</button>
+    </form>
+    <a class="botao secundario" href="{{ url_for('exportar') }}">Exportar JSON</a>
+    <form method="post" action="{{ url_for('importar') }}" enctype="multipart/form-data" class="importar">
+      <input type="file" name="arquivo" accept=".json,application/json" required>
+      <button type="submit" class="secundario">Importar JSON</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  const form = document.getElementById('form-config');
+  const lista = document.getElementById('lista-pontos');
+
+  // Sugestões de nomes de pontos a partir das ligações digitadas
+  function atualizarLista() {
+    const nomes = new Set();
+    form.querySelectorAll('input[name=origem], input[name=destino]').forEach(i => {
+      if (i.value.trim()) nomes.add(i.value.trim());
+    });
+    lista.replaceChildren(...[...nomes].sort().map(n => Object.assign(document.createElement('option'), { value: n })));
+  }
+
+  form.addEventListener('click', ev => {
+    if (ev.target.matches('.remover')) {
+      ev.target.closest('tr').remove();
+      atualizarLista();
+    }
+    const alvo = ev.target.dataset.adicionar;
+    if (alvo) {
+      const corpo = document.querySelector(`#${alvo} tbody`);
+      const linha = document.getElementById(`modelo-${alvo}`).content.firstElementChild.cloneNode(true);
+      corpo.appendChild(linha);
+      linha.querySelector('input').focus();
+    }
+  });
+  form.addEventListener('input', atualizarLista);
+  atualizarLista();
+})();
+</script>
+{% endblock %}

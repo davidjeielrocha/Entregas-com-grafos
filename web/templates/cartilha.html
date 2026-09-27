@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block titulo %}Cartilha de uso{% endblock %}
+
+{% block corpo %}
+<h1>Cartilha de uso</h1>
+<p class="nota">Um guia rápido para consultar as rotas de entrega e ajustar os dados da empresa.</p>
+
+<div class="cartilha-layout">
+  <nav class="cartilha-sumario" aria-label="Sumário da cartilha">
+    <strong>Nesta cartilha</strong>
+    <ol>
+      <li><a href="#c1">O que a aplicação faz</a></li>
+      <li><a href="#c2">Conhecendo a tela</a></li>
+      <li><a href="#c3">Lendo os resultados</a></li>
+      <li><a href="#c4">Alterando os dados</a></li>
+      <li><a href="#c5">Casos de uso comuns</a></li>
+      <li><a href="#c6">Guardar e compartilhar</a></li>
+      <li><a href="#c7">Voltar ao padrão</a></li>
+      <li><a href="#c8">Mensagens de erro</a></li>
+      <li><a href="#c9">Glossário</a></li>
+    </ol>
+  </nav>
+
+  <div>
+    <section id="c1" class="cartao">
+      <h2>1. O que a aplicação faz</h2>
+      <p>A aplicação representa os pontos de entrega da empresa como um <strong>grafo</strong>: cada bairro é um
+         <em>ponto</em> e cada via entre dois bairros é uma <em>ligação</em> com um <em>custo</em>. A partir disso ela
+         calcula automaticamente:</p>
+      <ul>
+        <li>o caminho mais barato entre a sede e um destino;</li>
+        <li>quanto custa chegar da sede a cada ponto;</li>
+        <li>a rota mais econômica para visitar todos os pontos;</li>
+        <li>o valor em reais de uma rota completa até a sede.</li>
+      </ul>
+      <p>Tudo é recalculado sempre que você altera os dados — não é preciso fazer contas à mão.</p>
+    </section>
+
+    <section id="c2" class="cartao">
+      <h2>2. Conhecendo a tela</h2>
+      <p>No menu superior você encontra:</p>
+      <ul>
+        <li><strong>Resultados</strong> — página inicial com todos os cálculos e imagens.</li>
+        <li><strong>Configuração</strong> — onde você edita pontos, ligações, custos e parâmetros.</li>
+        <li><strong>Selo de dados</strong> — mostra <em>Dados padrão</em> (os do enunciado) ou
+            <em>Dados personalizados</em> (em laranja, quando você salvou alterações).</li>
+        <li><strong>Botão ☾ / ☀</strong> — alterna entre o modo claro e o <strong>modo noturno</strong>.</li>
+        <li><strong>Cartilha de uso</strong> — este guia, sempre disponível no canto direito.</li>
+      </ul>
+      <h3>Modo noturno</h3>
+      <p>Na primeira visita, a aplicação segue o tema do seu sistema operacional ou navegador. Clique em
+         <strong>☾</strong> para escurecer a tela ou em <strong>☀</strong> para voltar ao modo claro. A escolha fica
+         salva neste navegador e vale para todas as páginas. No modo noturno, os mapas do grafo também são exibidos
+         em cores escuras.</p>
+    </section>
+
+    <section id="c3" class="cartao">
+      <h2>3. Lendo os resultados</h2>
+      <p>A página <a href="{{ url_for('resultados') }}">Resultados</a> começa com um resumo (sede, número de pontos,
+         ligações e valor por unidade de custo) e atalhos para cada item.</p>
+      <table>
+        <thead><tr><th>Item</th><th>O que mostra</th><th>Como interpretar</th></tr></thead>
+        <tbody>
+          <tr><td>3.1</td><td>Mapa com todos os pontos e ligações</td><td>O número em cada linha é o custo da ligação. A tabela ao lado indica quantas ligações cada ponto possui.</td></tr>
+          <tr><td>3.2</td><td>Menor caminho da sede até um destino</td><td>O trajeto aparece em vermelho no mapa; o ponto verde é a partida e o vermelho, a chegada.</td></tr>
+          <tr><td>3.3</td><td>Custos da sede até todos os pontos</td><td>(A) o menor custo para cada ponto; (B) todas as alternativas — clique em um ponto para abrir a lista; (C) o menor conjunto de ligações que mantém tudo conectado.</td></tr>
+          <tr><td>3.4</td><td>Rota mais econômica visitando todos</td><td>As etiquetas 1º, 2º, 3º… no mapa indicam a ordem das viagens.</td></tr>
+          <tr><td>3.5</td><td>Custo em R$ de uma rota completa até a sede</td><td>Compara a rota sem repetir pontos com a rota ótima, que pode passar duas vezes por um ponto. O quadro verde é a opção mais barata.</td></tr>
+        </tbody>
+      </table>
+      <div class="dica">Nas rotas, os números pequenos abaixo das setas (→) são o custo de cada trecho.</div>
+    </section>
+
+    <section id="c4" class="cartao">
+      <h2>4. Alterando os dados</h2>
+      <ol class="passos">
+        <li>Clique em <a href="{{ url_for('configuracao') }}"><strong>Configuração</strong></a> no menu superior.</li>
+        <li>Em <strong>Parâmetros</strong>, ajuste a sede, o destino do menor caminho (3.2), a origem da rota final (3.5)
+            e o valor em R$ por unidade de custo.</li>
+        <li>Em <strong>Ligações entre pontos</strong>, edite os nomes e custos. Use
+            <strong>+ Adicionar ligação</strong> para incluir uma nova linha e <strong>×</strong> para remover.</li>
+        <li>Opcionalmente, em <strong>Posições no desenho</strong>, informe as coordenadas x e y de cada ponto.</li>
+        <li>Clique em <strong>Salvar e recalcular</strong>. Você volta para os Resultados já atualizados.</li>
+      </ol>
+      <div class="dica">Ao digitar o nome de um ponto, a aplicação sugere os nomes já cadastrados. Use-os para evitar
+        diferenças de grafia — “Asa Sul” e “asa sul” seriam tratados como pontos distintos.</div>
+      <div class="alerta">As alterações só são aplicadas ao clicar em <strong>Salvar e recalcular</strong>. O botão
+        <strong>Cancelar</strong> descarta tudo o que foi editado.</div>
+    </section>
+
+    <section id="c5" class="cartao">
+      <h2>5. Casos de uso comuns</h2>
+      <h3>Incluir um novo bairro</h3>
+      <p>Adicione ao menos uma ligação entre o novo bairro e um ponto existente, por exemplo
+         <em>Lago Norte — Sobradinho — 9</em>. O ponto passa a existir automaticamente. Se não informar sua posição,
+         ele será colocado no desenho de forma automática.</p>
+      <h3>Remover um bairro</h3>
+      <p>Remova todas as ligações que envolvem o bairro (e sua linha em Posições, se houver). Confira se os demais
+         pontos continuam ligados entre si.</p>
+      <h3>Atualizar o preço do combustível ou do serviço</h3>
+      <p>Altere apenas o campo <strong>Valor (R$) por unidade de custo</strong>. O item 3.5 será recalculado.</p>
+      <h3>Mudar a sede da empresa</h3>
+      <p>Altere o campo <strong>Sede</strong>. Todos os itens passam a partir (ou chegar) do novo endereço. A origem da
+         rota final (3.5) precisa ser diferente da sede.</p>
+      <h3>Reorganizar o desenho</h3>
+      <p>Ajuste as coordenadas em <strong>Posições no desenho</strong>: x maior leva o ponto para a direita e y maior
+         leva o ponto para cima.</p>
+    </section>
+
+    <section id="c6" class="cartao">
+      <h2>6. Guardar e compartilhar cenários</h2>
+      <ul>
+        <li><strong>Exportar JSON</strong> baixa um arquivo com a configuração atual — útil como cópia de segurança ou
+            para enviar a um colega.</li>
+        <li><strong>Importar JSON</strong> carrega um arquivo exportado anteriormente e recalcula os resultados.</li>
+      </ul>
+      <div class="dica">Exporte o cenário atual antes de fazer grandes mudanças. Assim você pode voltar a ele a
+        qualquer momento.</div>
+    </section>
+
+    <section id="c7" class="cartao">
+      <h2>7. Voltar aos dados padrão</h2>
+      <p>Em <strong>Configuração → Outras ações</strong>, clique em <strong>Restaurar padrão</strong> e confirme. Os
+         dados personalizados são descartados e os dados originais do enunciado voltam a valer. O botão fica
+         desativado quando você já está usando os dados padrão.</p>
+      <div class="alerta">A restauração não pode ser desfeita. Se quiser guardar o cenário atual, use
+        <strong>Exportar JSON</strong> antes.</div>
+    </section>
+
+    <section id="c8" class="cartao">
+      <h2>8. Mensagens de erro e como resolver</h2>
+      <table>
+        <thead><tr><th>Mensagem</th><th>O que fazer</th></tr></thead>
+        <tbody>
+          <tr><td>“… não aparece em nenhuma ligação”</td><td>O ponto informado na sede, no destino ou na origem não existe. Verifique a grafia ou crie uma ligação para ele.</td></tr>
+          <tr><td>“O custo deve ser um número positivo”</td><td>Preencha o custo com um valor maior que zero.</td></tr>
+          <tr><td>“… está duplicada”</td><td>A mesma ligação foi cadastrada duas vezes (a ordem dos pontos não importa). Remova uma delas.</td></tr>
+          <tr><td>“origem e destino iguais”</td><td>Uma ligação precisa unir dois pontos diferentes.</td></tr>
+          <tr><td>“O grafo precisa ser conexo”</td><td>Algum ponto ficou isolado. Adicione uma ligação que o conecte ao restante.</td></tr>
+          <tr><td>“Máximo de 11 pontos”</td><td>O cálculo da rota completa testa todas as ordens de visita e ficaria lento demais. Reduza a quantidade de pontos.</td></tr>
+          <tr><td>“A origem da rota final deve ser diferente da sede”</td><td>Escolha outro ponto de partida para o item 3.5.</td></tr>
+          <tr><td>“Não foi possível carregar os dados”</td><td>O arquivo de configuração foi danificado. Clique em <strong>Restaurar padrão</strong> ou importe um JSON válido.</td></tr>
+          <tr><td>“Não existe rota … sem repetir pontos”</td><td>Não é um erro: a rede não permite visitar todos sem repetir. A aplicação mostra a melhor rota com repetição.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="c9" class="cartao">
+      <h2>9. Glossário</h2>
+      <table>
+        <tbody>
+          <tr><td><strong>Ponto (vértice)</strong></td><td>Local de entrega, como um bairro.</td></tr>
+          <tr><td><strong>Ligação (aresta)</strong></td><td>Via de mão dupla entre dois pontos.</td></tr>
+          <tr><td><strong>Custo (peso)</strong></td><td>Valor associado a percorrer uma ligação (distância, tempo ou gasto).</td></tr>
+          <tr><td><strong>Grau</strong></td><td>Quantidade de ligações de um ponto.</td></tr>
+          <tr><td><strong>Dijkstra</strong></td><td>Método que encontra o caminho de menor custo entre pontos.</td></tr>
+          <tr><td><strong>Árvore Geradora Mínima</strong></td><td>Menor conjunto de ligações que mantém todos os pontos conectados, com o menor custo total.</td></tr>
+          <tr><td><strong>Caminho Hamiltoniano</strong></td><td>Rota que passa por todos os pontos exatamente uma vez.</td></tr>
+          <tr><td><strong>Passeio</strong></td><td>Rota que pode repetir pontos quando isso reduz o custo total.</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</div>
+{% endblock %}

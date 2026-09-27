@@ -1,0 +1,8 @@
+# Documentação da atividade (fora do versionamento)
+docs/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/

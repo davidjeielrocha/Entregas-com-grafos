@@ -1,0 +1,5 @@
+flask>=3.0
+networkx>=3.0
+matplotlib>=3.7
+# Apenas para gerar o relatório em PDF (gerar_relatorio.py):
+# reportlab>=4.0

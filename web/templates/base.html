@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Rotas de Entrega{% endblock %} · Transporte de Carlos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+  <script>
+    // Aplica o tema salvo antes de desenhar a página (evita piscar em branco no modo noturno)
+    try {
+      const tema = localStorage.getItem('tema');
+      if (tema === 'claro' || tema === 'escuro') document.documentElement.dataset.tema = tema;
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <header class="topo">
+    <div class="conteudo topo-linha" style="margin-bottom: 2%;">
+      <a class="marca" href="{{ url_for('resultados') }}">Transporte de Carlos <small>· rotas de entrega</small></a>
+      <nav>
+        <a href="{{ url_for('resultados') }}" class="{{ 'ativo' if request.endpoint == 'resultados' }}">Resultados</a>
+        <a href="{{ url_for('configuracao') }}" class="{{ 'ativo' if request.endpoint == 'configuracao' }}">Configuração</a>
+        <span class="selo {{ 'selo-alerta' if personalizada }}">
+          {{ 'Dados personalizados' if personalizada else 'Dados padrão' }}
+        </span>
+      </nav>
+      <button type="button" class="botao-tema" id="botao-tema" title="Alternar modo noturno"
+              aria-label="Alternar modo noturno">
+        <span class="icone-lua" aria-hidden="true">☾</span><span class="icone-sol" aria-hidden="true">☀</span>
+      </button>
+      <a class="botao-cartilha {{ 'ativo' if request.endpoint == 'cartilha' }}" href="{{ url_for('cartilha') }}"
+         title="Orientações de uso da aplicação">
+        <span aria-hidden="true">?</span> Cartilha de uso
+      </a>
+    </div>
+  </header>
+
+  <main class="conteudo">
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+      {% for categoria, msg in mensagens %}
+        <div class="aviso aviso-{{ categoria }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block corpo %}{% endblock %}
+  </main>
+
+  <footer class="conteudo rodape">
+    Teoria dos Grafos e Análise de Algoritmos · VOCÊ SA
+  </footer>
+  <script>
+    (() => {
+      const raiz = document.documentElement;
+      const escuroSistema = window.matchMedia('(prefers-color-scheme: dark)');
+      const temaAtual = () => raiz.dataset.tema || (escuroSistema.matches ? 'escuro' : 'claro');
+      const botao = document.getElementById('botao-tema');
+      const rotular = () => {
+        const texto = temaAtual() === 'escuro' ? 'Ativar modo claro' : 'Ativar modo noturno';
+        botao.title = texto;
+        botao.setAttribute('aria-label', texto);
+      };
+      botao.addEventListener('click', () => {
+        raiz.dataset.tema = temaAtual() === 'escuro' ? 'claro' : 'escuro';
+        try { localStorage.setItem('tema', raiz.dataset.tema); } catch (e) {}
+        rotular();
+      });
+      escuroSistema.addEventListener('change', rotular);
+      rotular();
+    })();
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

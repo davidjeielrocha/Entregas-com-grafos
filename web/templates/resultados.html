@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block titulo %}Resultados{% endblock %}
+
+{% macro rota(caminho) -%}
+  <span class="rota">
+    {%- for n in caminho -%}
+      {%- if not loop.first %}<span class="seta">→<small>{{ g.peso(caminho[loop.index0 - 1], n) | num }}</small></span>{% endif -%}
+      <span class="ponto">{{ n }}</span>
+    {%- endfor -%}
+  </span>
+{%- endmacro %}
+
+{% macro imagem(par, alt) -%}
+  <figure class="grafo">
+    <img class="img-tema-claro" src="data:image/png;base64,{{ par.claro }}" alt="{{ alt }}">
+    <img class="img-tema-escuro" src="data:image/png;base64,{{ par.escuro }}" alt="{{ alt }}">
+  </figure>
+{%- endmacro %}
+
+{% block corpo %}
+<section class="resumo">
+  <div class="kpi"><span>Sede</span><strong>{{ c.sede }}</strong></div>
+  <div class="kpi"><span>Pontos</span><strong>{{ r['3.1'].vertices }}</strong></div>
+  <div class="kpi"><span>Ligações</span><strong>{{ r['3.1'].arestas }}</strong></div>
+  <div class="kpi"><span>Valor por unidade de custo</span><strong>{{ c.valor_por_custo | brl }}</strong></div>
+</section>
+
+<nav class="indice">
+  <a href="#i31">3.1 Grafo</a><a href="#i32">3.2 Menor caminho</a><a href="#i33">3.3 Custos da sede</a>
+  <a href="#i34">3.4 Rota econômica</a><a href="#i35">3.5 Custo em R$</a>
+</nav>
+
+{# ---------------------------------------------------------------- 3.1 #}
+<section id="i31" class="cartao">
+  <h2><span class="num">3.1</span> Grafo dos pontos de entrega</h2>
+  <p>Grafo não direcionado e ponderado com {{ r['3.1'].vertices }} vértices e {{ r['3.1'].arestas }} arestas
+     — {{ 'conexo' if r['3.1'].conexo else 'desconexo' }}.</p>
+  <div class="duas-colunas">
+    {{ imagem(imagens[0], "Grafo dos pontos de entrega") }}
+    <table>
+      <thead><tr><th>Ponto</th><th class="dir">Grau</th></tr></thead>
+      <tbody>{% for n, grau in r['3.1'].graus %}<tr><td>{{ n }}</td><td class="dir">{{ grau }}</td></tr>{% endfor %}</tbody>
+    </table>
+  </div>
+</section>
+
+{# ---------------------------------------------------------------- 3.2 #}
+{% set r2 = r['3.2'] %}
+<section id="i32" class="cartao">
+  <h2><span class="num">3.2</span> Menor caminho {{ r2.origem }} → {{ r2.destino }} <small>(Dijkstra)</small></h2>
+  <p class="destaque">Custo mínimo: <strong>{{ r2.custo | num }}</strong></p>
+  <p>{{ rota(r2.rota) }}</p>
+  {{ imagem(imagens[1], "Menor caminho") }}
+</section>
+
+{# ---------------------------------------------------------------- 3.3 #}
+{% set r3 = r['3.3'] %}
+<section id="i33" class="cartao">
+  <h2><span class="num">3.3</span> Custos entre a sede ({{ c.sede }}) e todos os pontos</h2>
+
+  <h3>A) Menor custo da sede até cada ponto (Dijkstra)</h3>
+  <table>
+    <thead><tr><th>Destino</th><th class="dir">Custo</th><th>Rota</th></tr></thead>
+    <tbody>
+      {% for destino, caminho, custo in r3.dijkstra %}
+      <tr><td>{{ destino }}</td><td class="dir">{{ custo | num }}</td><td>{{ rota(caminho) }}</td></tr>
+      {% endfor %}
+    </tbody>
+    <tfoot><tr><td>Soma</td><td class="dir">{{ r3.soma_dijkstra | num }}</td><td></td></tr></tfoot>
+  </table>
+  {{ imagem(imagens[2], "Árvore de menores caminhos a partir da sede") }}
+
+  <h3>B) Todos os caminhos simples da sede até cada ponto</h3>
+  <p>{{ r3.total_caminhos }} caminhos no total · soma de todos os custos: {{ r3.soma_caminhos | num }}</p>
+  {% for destino, caminhos in r3.todos.items() %}
+  <details>
+    <summary>{{ destino }} — {{ caminhos | length }} caminhos (menor custo {{ caminhos[0][1] | num }})</summary>
+    <table>
+      <thead><tr><th>#</th><th class="dir">Custo</th><th>Caminho</th></tr></thead>
+      <tbody>
+        {% for caminho, custo in caminhos %}
+        <tr><td>{{ loop.index }}</td><td class="dir">{{ custo | num }}</td><td>{{ caminho | join(' → ') }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </details>
+  {% endfor %}
+
+  <h3>C) Árvore Geradora Mínima (Prim)</h3>
+  <table>
+    <thead><tr><th>Ligação</th><th class="dir">Custo</th></tr></thead>
+    <tbody>{% for u, v, w in r3.agm %}<tr><td>{{ u }} — {{ v }}</td><td class="dir">{{ w | num }}</td></tr>{% endfor %}</tbody>
+    <tfoot><tr><td>Custo da AGM</td><td class="dir">{{ r3.custo_agm | num }}</td></tr></tfoot>
+  </table>
+</section>
+
+{# ---------------------------------------------------------------- 3.4 #}
+{% set r4 = r['3.4'] %}
+<section id="i34" class="cartao">
+  <h2><span class="num">3.4</span> Rota mais econômica visitando todos (origem: {{ c.sede }})</h2>
+  <p>{{ r4.avaliadas }} ordens de visita avaliadas por força bruta.</p>
+  {% if r4.estrita[0] %}
+    <p class="destaque">Custo: <strong>{{ r4.estrita[1] | num }}</strong></p>
+    <p>{{ rota(r4.estrita[0]) }}</p>
+  {% else %}
+    <p class="aviso aviso-erro">Não existe rota que visite todos sem repetir pontos.</p>
+  {% endif %}
+  {% if r4.passeio[1] < r4.estrita[1] %}
+    <p>Passeio mais barato (repetindo pontos): custo <strong>{{ r4.passeio[1] | num }}</strong> — {{ rota(r4.passeio[0]) }}</p>
+  {% else %}
+    <p class="nota">Permitir repetir pontos não reduz o custo (passeio ótimo = {{ r4.passeio[1] | num }}).</p>
+  {% endif %}
+  {{ imagem(imagens[3], "Rota mais econômica") }}
+</section>
+
+{# ---------------------------------------------------------------- 3.5 #}
+{% set r5 = r['3.5'] %}
+<section id="i35" class="cartao">
+  <h2><span class="num">3.5</span> {{ r5.origem }} → todos os pontos → {{ r5.destino }}
+      <small>({{ r5.valor_por_custo | brl }} por unidade de custo)</small></h2>
+  <div class="cenarios">
+    <div class="cenario">
+      <h3>Cenário 1 · sem repetir pontos</h3>
+      {% if r5.estrita[0] %}
+        <p class="valor">{{ r5.valor_estrita | brl }}</p>
+        <p>Custo {{ r5.estrita[1] | num }} × {{ r5.valor_por_custo | brl }}</p>
+        <p>{{ rota(r5.estrita[0]) }}</p>
+      {% else %}
+        <p>Não existe rota sem repetir pontos.</p>
+      {% endif %}
+    </div>
+    <div class="cenario melhor">
+      <h3>Cenário 2 · passeio ótimo</h3>
+      <p class="valor">{{ r5.valor_passeio | brl }}</p>
+      <p>Custo {{ r5.passeio[1] | num }} × {{ r5.valor_por_custo | brl }}</p>
+      <p>{{ rota(r5.passeio[0]) }}</p>
+    </div>
+  </div>
+  {% if r5.economia %}<p class="destaque">Economia do cenário 2: <strong>{{ r5.economia | brl }}</strong></p>{% endif %}
+  {{ imagem(imagens[4], "Rota final até a sede") }}
+</section>
+{% endblock %}
